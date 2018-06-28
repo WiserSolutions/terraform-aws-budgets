@@ -80,24 +80,6 @@ CMD
   }
 }
 
-# When actual bill exceeds 90% budget
-resource "null_resource" "budgets_actual_90" {
-  count = "${length(var.budgets)}"
-
-  triggers {
-    budget_id = "${element(aws_budgets_budget.budgets.*.id, count.index)}"
-    prefix    = "${local.notification_cmd_prefix}"
-  }
-
-  provisioner "local-exec" {
-    command = <<CMD
-${local.notification_cmd_prefix} ${var.budget_name_prefix}${lookup(var.budgets[count.index], "name")}-${title(lower(var.time_unit))} \
---subscribers SubscriptionType=EMAIL,Address=${var.email} \
---notification NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=90,ThresholdType=PERCENTAGE
-CMD
-  }
-}
-
 # When actual bill exceeds 80% budget
 resource "null_resource" "budgets_actual_80" {
   count = "${length(var.budgets)}"
