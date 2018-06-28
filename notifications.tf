@@ -43,22 +43,6 @@ CMD
   }
 }
 
-# When actual bill exceeds 90% budget
-resource "null_resource" "budget_actual_90" {
-  count = "${length(var.budgets) == 0 ? 1 : 0}"
-
-  triggers {
-    budget_id = "${aws_budgets_budget.budget.id}"
-    prefix    = "${local.notification_cmd_prefix_single}"
-  }
-
-  provisioner "local-exec" {
-    command = <<CMD
-${local.notification_cmd_prefix_single} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=90,ThresholdType=PERCENTAGE
-CMD
-  }
-}
-
 # When actual bill exceeds 80% budget
 resource "null_resource" "budget_actual_80" {
   count = "${length(var.budgets) == 0 ? 1 : 0}"
@@ -181,4 +165,3 @@ output "external" {
   value = "${data.external.notification.result}"
 }
 /**/
-
